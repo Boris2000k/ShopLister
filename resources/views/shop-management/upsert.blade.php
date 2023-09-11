@@ -37,26 +37,26 @@
                 </div>
             </div>
         </div>
-        <div class="col-4">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th></th>
-                        <th>Has Permission</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($users_table as $user_id => $user_data)
-                        <tr>
-                            <td>{{$user_data['name']}}</td>
-                            <td>{{Form::checkbox('users_table['.$user_id.']', false, true, ['style' => 'display:none'])}}</td>
-                            <td>{{Form::checkbox('users_table['.$user_id.']', true, $user_data['is_employee'])}}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+{{--        <div class="col-4">--}}
+{{--            <table class="table">--}}
+{{--                <thead>--}}
+{{--                    <tr>--}}
+{{--                        <th>Name</th>--}}
+{{--                        <th></th>--}}
+{{--                        <th>Has Permission</th>--}}
+{{--                    </tr>--}}
+{{--                </thead>--}}
+{{--                <tbody>--}}
+{{--                    @foreach($users_table as $user_id => $user_data)--}}
+{{--                        <tr>--}}
+{{--                            <td>{{$user_data['name']}}</td>--}}
+{{--                            <td>{{Form::checkbox('users_table['.$user_id.']', false, true, ['style' => 'display:none'])}}</td>--}}
+{{--                            <td>{{Form::checkbox('users_table['.$user_id.']', true, $user_data['is_employee'])}}</td>--}}
+{{--                        </tr>--}}
+{{--                    @endforeach--}}
+{{--                </tbody>--}}
+{{--            </table>--}}
+{{--        </div>--}}
         @if($chart_data != null)
         <div class="col-6">
             <div class="card">

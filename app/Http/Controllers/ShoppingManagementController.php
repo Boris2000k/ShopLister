@@ -29,21 +29,21 @@ class ShoppingManagementController extends Controller
             } else {
                 switch($input['type']){
                     case 'discounted':
-                        $products = Product::where('discount', '>', 0)->get()->groupBy('product_group')->map(function($product_group) use($now){
-                            return $product_group->keyBy('id')->map(function($product) use ($now){
-                                if(isset($product->discount_duration)){
+                        $products = Product::where('discount', '>', 0)->get()->reject(function($product) use ($now){
+                            if(isset($product->discount_duration)){
                                     $discount_duration_exploded = explode(' - ', $product->discount_duration);
-                                    $start_carbon = Carbon::createFromFormat('Y-m-d', $discount_duration_exploded[0]);
-                                    $end_carbon = Carbon::createFromFormat('Y-m-d', $discount_duration_exploded[1]);
-                                    if($now->betweenIncluded($start_carbon, $end_carbon)){
-                                        if(DB::table('shop_product_rel')->where('product_id', $product->id)->exists()){
-                                            $product->sold_by = $product->soldBy->keyBy('id');
-                                            return $product;
-                                        }
+                                    $start_carbon = Carbon::createFromFormat('Y-m-d', $discount_duration_exploded[0])->startOfDay();
+                                    $end_carbon = Carbon::createFromFormat('Y-m-d', $discount_duration_exploded[1])->endOfDay();
+                                    if($now->betweenIncluded($start_carbon, $end_carbon) && DB::table('shop_product_rel')->where('product_id', $product->id)->exists()){
+                                        return false;
                                     }
                                 }
-                            });
-                        });
+                            return true;
+                        })->map(function($product){
+                            $product->sold_by = $product->soldBy->keyBy('id');
+                            return $product;
+                        })
+                            ->groupBy('product_group', true);
                         break;
                     case 'Food':
                     case 'Soft Drink':
@@ -153,7 +153,6 @@ class ShoppingManagementController extends Controller
             'selected_shop' => $store_id ? Shop::find($store_id) : null,
             'selected_product' => $selected_product,
             'sold_by' => $sold_by,
-
         ]);
     }
 }
